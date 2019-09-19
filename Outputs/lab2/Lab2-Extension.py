@@ -17,7 +17,7 @@ import csv
 import os
 path = os.path.join(os.path.expanduser('~'), "outputs/Lab2")
 
-class StdOutListener(StreamListener):
+class StdOutListenerV2(StreamListener):
 
     def __init__(self, time_limit=40):
         # start_time: is the start running time of the program
@@ -25,10 +25,10 @@ class StdOutListener(StreamListener):
         # limit is the the assigned running time of the program, its default value is 40
         self.limit = time_limit
         # csvfile is the file to store the data
-        self.csvfile = open(path + '/Twitter_Data.csv', 'w')
+        self.csvfile = open(path + '/Twitter_Data_NY_Dog.csv', 'w')
         #self.csvwriter = csv.writer(csvfile)
         
-        super(StdOutListener, self).__init__()
+        super(StdOutListenerV2, self).__init__()
         
     
     # The on_data function will keep crawling the twitter posts one by one, and store them into the data parameter
@@ -53,12 +53,13 @@ class StdOutListener(StreamListener):
             # We only want to see the twitter posts with coordinates
             if( geo_flag == 1 ):
                 text = d['text']
-                creat_time = d['created_at']
-                print( 'catch data with coordinates' )
-                # use str() to convert double/float to string
-                #self.csvwriter.writerow( [creat_time, str(lon), str(lat), text] )
-                self.csvfile.write( creat_time + "," + str(lon) + "," + str(lat) + "," + text.rstrip() + '\n')
-                return True
+                if '#dog' in text.rstrip().lower():
+                    creat_time = d['created_at']
+                    print( 'catch data with coordinates' )
+                    # use str() to convert double/float to string
+                    #self.csvwriter.writerow( [creat_time, str(lon), str(lat), text] )
+                    self.csvfile.write( creat_time + "," + str(lon) + "," + str(lat) + "," + text.rstrip() + '\n')
+                    return True
         # If time exceeded, stop the program.
         else: 
             self.csvfile.close()
@@ -68,14 +69,15 @@ class StdOutListener(StreamListener):
     def on_error(self, status):
         print(status)
 
+
 if __name__ == '__main__':
 
     # This handles Twitter authentification and the connection to the Twitter Streaming API
-    l = StdOutListener(600)
+    l = StdOutListenerV2(200)
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     stream = Stream(auth, l)
 
     # A comma-separated list of longitude,latitude pairs specifying a set of bounding boxes to filter Tweets by
     # e.g. [-122.75,36.8,-121.75,37.8] indicates the area of San Francisco
-    stream.filter(locations=[-74,40,-73,41], track=['#dog'])
+    stream.filter(locations=[-74, 40, -73, 41])
