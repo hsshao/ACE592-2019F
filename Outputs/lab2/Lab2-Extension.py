@@ -53,7 +53,7 @@ class StdOutListenerV2(StreamListener):
                 print('no coordinates')
 
             # We only want to see the twitter posts with coordinates
-            if( geo_flag == 1 ):
+            if ( geo_flag == 1 ):
                 text = d['text'].rstrip().replace('\n', ' ')
                 if '#' in text.lower():
                     creat_time = d['created_at']
