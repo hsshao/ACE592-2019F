@@ -5,6 +5,8 @@ consumer_secret = ' '
 access_token = ' '
 access_token_secret = ' '
 
+# Hashtag: "#dog" is rare, so I just crawling all tweets with any hashtag.
+
 
 #Import the necessary methods/packages from tweepy library
 from tweepy.streaming import StreamListener
@@ -25,7 +27,7 @@ class StdOutListenerV2(StreamListener):
         # limit is the the assigned running time of the program, its default value is 40
         self.limit = time_limit
         # csvfile is the file to store the data
-        self.csvfile = open(path + '/Twitter_Data_NY_Dog.csv', 'w')
+        self.csvfile = open(path + '/Twitter_Data_NY_Hash.csv', 'w')
         #self.csvwriter = csv.writer(csvfile)
         
         super(StdOutListenerV2, self).__init__()
@@ -52,14 +54,16 @@ class StdOutListenerV2(StreamListener):
 
             # We only want to see the twitter posts with coordinates
             if( geo_flag == 1 ):
-                text = d['text']
-                if '#dog' in text.rstrip().lower():
+                text = d['text'].rstrip().replace('\n', ' ')
+                if '#' in text.lower():
                     creat_time = d['created_at']
-                    print( 'catch data with coordinates' )
+                    print( 'catch data with coordinates and hashtag' )
                     # use str() to convert double/float to string
                     #self.csvwriter.writerow( [creat_time, str(lon), str(lat), text] )
-                    self.csvfile.write( creat_time + "," + str(lon) + "," + str(lat) + "," + text.rstrip() + '\n')
+                    self.csvfile.write( creat_time + "," + str(lon) + "," + str(lat) + "," + text.replace(',', ';') + '\n')
                     return True
+                else:
+                    print('no hashtag')
         # If time exceeded, stop the program.
         else: 
             self.csvfile.close()
@@ -73,7 +77,7 @@ class StdOutListenerV2(StreamListener):
 if __name__ == '__main__':
 
     # This handles Twitter authentification and the connection to the Twitter Streaming API
-    l = StdOutListenerV2(200)
+    l = StdOutListenerV2(1000)
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     stream = Stream(auth, l)
