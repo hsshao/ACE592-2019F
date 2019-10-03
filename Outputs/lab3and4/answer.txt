@@ -1,0 +1,30 @@
+lab3-Q1:
+97.915/31.305
+
+lab4-Q1:
+parallel partools snow
+
+lab4-Q2:
+
+## Snow version not work
+## Set the number of cores to 4 for testing purposes, on a real run, you will need to use (np-1) number of cores.
+num_cores <- 4 
+
+packages <- c("snow")
+lapply(packages, pkgTest)
+
+cl <- makeCluster(num_cores) 
+
+clusterExport(cl, list("findModel","Markets1","US_P","US_D"))
+
+clusterApplyLB(cl, 1:length(Markets1), function(i){findModel(Markets1[i], US_P, US_D)})
+
+stopCluster(cl)
+
+## Set the number of cores to 4 for testing purposes, on a real run, you will need to use (np-1) number of cores.
+num_cores <- 4 
+
+packages <- c("parallel","MASS")
+lapply(packages, pkgTest)
+
+mclapply(1:length(Markets1), function(i){findModel(Markets1[i], US_P, US_D)}, mc.cores = num_cores)
