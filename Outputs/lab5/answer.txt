@@ -1,0 +1,65 @@
+model <- xgb.train(data = dtrain,
+                   max.depth = 300, 
+                   eta = 0.1, 
+                   gamma = 0.01,
+                   subsample = 0.5,
+                   nround = 50,
+                   watchlist = watchlist, 
+                   print_every_n = 10,
+                   objective = "reg:linear")
+cat("Change eta:\n")
+model <- xgb.train(data = dtrain,
+                   max.depth = 300, 
+                   eta = 1, 
+                   gamma = 0.01,
+                   subsample = 0.5,
+                   nround = 50,
+                   watchlist = watchlist, 
+                   print_every_n = 10,
+                   objective = "reg:linear")
+cat("Change max.depth:\n")
+model <- xgb.train(data = dtrain,
+                   max.depth = 600, 
+                   eta = 0.1, 
+                   gamma = 0.01,
+                   subsample = 0.5,
+                   nround = 50,
+                   watchlist = watchlist, 
+                   print_every_n = 10,
+                   objective = "reg:linear")
+
+
+
+# eat:
+# Step size shrinkage used in update to prevents overfitting.
+# After each boosting step, we can directly get the weights of new features,
+# and eta shrinks the feature weights to make the boosting process more conservative.
+
+# The larger the eta, the faster the training. This is because the larger change of coefficient each time.
+# This is like regularization term. So, a larger eta also means more likely to get overfit, because it move too fast to the
+# local minimal of train rmse. 
+
+# max.depth:
+# Maximum depth of a tree. Increasing this value will make the model more complex and more likely to overfit.
+# 0 is only accepted in lossguided growing policy when tree_method is set as hist and it indicates no limit on depth.
+# Beware that XGBoost aggressively consumes memory when training a deep tree.
+
+# Increasse max.depth will make the tree more complex. That means better train rmse. But may increase test rmse.
+# But because other regularization terms, like gamma  and subsample, the overfitting problem is not too severe.
+
+# improve the model's performance:
+# I found a better model by increase max.depth and nround, but decrease subsample and eta.
+# The idea is increase nround but decrease eta will make the model move slower. So it will unlikely overfit.
+# And increase max.depth but decrease subsample will make the model more complex. But at the same time, I decrease subsample.
+# That means each time the tree need use smaller subsample. It will help the overfitting problem caused by higher max.depth.
+
+cat("Better model:\n")
+model <- xgb.train(data = dtrain,
+                   max.depth = 400, 
+                   eta = 0.05, 
+                   gamma = 0.01,
+                   subsample = 0.2,
+                   nround = 500,
+                   watchlist = watchlist, 
+                   print_every_n = 100,
+                   objective = "reg:linear")
