@@ -1,0 +1,19 @@
+Q1:
+
+The overspecified Double Selection has the best distribution. It has mean around 1 and bell shape curve. The naive models suffer from the omitted-variable bias.
+
+Q2:
+
+Because an overspecified model gives unbiased estimates, it just change the variances.
+
+Q3:
+
+For type 2 error, we need alternate hypothesis. If the null hypothesis is "No Treatment Effect". Then the right condition is "if(p.>.05)".
+
+Q4:
+
+If create a correlation between the treatment and the independent variables, the coefficients in naive method is smaller (but very little difference). This is expected. Since include an independent variables that is related to treatment will bias the coefficient on treatment. The overspecified OLS generates higher coefficient. But overspecified Double Selection still gives unbiased estimation. Also notice that the type 1 and type 2 errors not change much. (other methods may include IV) The small difference may come from the facts that we only have 40 simulations.
+
+Q5:
+
+If the model is not sparse, then Double Selection is inefficient. OLS may generate better reults.
